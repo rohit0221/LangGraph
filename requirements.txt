@@ -8,3 +8,8 @@ langchain_anthropic
 tavily-python
 langchain-community
 langchain-fireworks
+bs4
+chromadb
+langchainhub
+langchain_nomic
+nomic[local]
