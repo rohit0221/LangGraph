@@ -13,3 +13,8 @@ chromadb
 langchainhub
 langchain_nomic
 nomic[local]
+langchain_experimental
+langchain_openai
+pandas
+matplotlib
+langchain_core
