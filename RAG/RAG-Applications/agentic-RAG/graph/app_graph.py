@@ -2,13 +2,23 @@ from typing import List
 
 from typing_extensions import TypedDict
 
-
-from agent.agent import *
-
 from graph.nodes import *
 from graph.edges import grade_documents
 
 from chains.indexer import *
+
+from typing import Annotated, Sequence, TypedDict
+
+from langchain_core.messages import BaseMessage
+
+from langgraph.graph.message import add_messages
+
+
+class AgentState(TypedDict):
+    # The add_messages function defines how an update should be processed
+    # Default is to replace. add_messages says "append"
+    messages: Annotated[Sequence[BaseMessage], add_messages]
+
 
 def create_graph_app():
 

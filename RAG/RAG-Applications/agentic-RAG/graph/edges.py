@@ -32,10 +32,11 @@ def grade_documents(state) -> Literal["generate", "rewrite"]:
         binary_score: str = Field(description="Relevance score 'yes' or 'no'")
 
     # LLM
-    model = ChatOpenAI(temperature=0, model="gpt-4-0125-preview", streaming=True)
+    model = ChatOpenAI(temperature=0, model="gpt-4o-mini", streaming=True)
 
     # LLM with tool and validation
     llm_with_tool = model.with_structured_output(grade)
+
 
     # Prompt
     prompt = PromptTemplate(

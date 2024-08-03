@@ -63,7 +63,7 @@ def rewrite(state):
     ]
 
     # Grader
-    model = ChatOpenAI(temperature=0, model="gpt-4-0125-preview", streaming=True)
+    model = ChatOpenAI(temperature=0, model="gpt-4o-mini", streaming=True)
     response = model.invoke(msg)
     return {"messages": [response]}
 
@@ -104,9 +104,3 @@ def generate(state):
     # Run
     response = rag_chain.invoke({"context": docs, "question": question})
     return {"messages": [response]}
-
-
-print("*" * 20 + "Prompt[rlm/rag-prompt]" + "*" * 20)
-prompt = hub.pull("rlm/rag-prompt").pretty_print()  # Show what the prompt looks like
-
-
