@@ -18,7 +18,7 @@ class GradeAnswer(BaseModel):
 
 
 answer_prompt = answer_grader_prompt()
-llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 structured_llm_answer_grader = llm.with_structured_output(GradeAnswer)
 
 answer_grader = answer_prompt | structured_llm_answer_grader

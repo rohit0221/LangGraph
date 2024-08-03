@@ -13,7 +13,7 @@ from langchain_core.output_parsers import StrOutputParser
 prompt = hub.pull("rlm/rag-prompt")
 
 # LLM
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
 # Post-processing
 def format_docs(docs):

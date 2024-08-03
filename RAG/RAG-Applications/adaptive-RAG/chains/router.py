@@ -7,7 +7,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from prompts.build_prompts import build_route_prompt
 from langchain_openai import ChatOpenAI
 
-llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 # Build a Router to route the query to most relavant datasource
 class RouteQuery(BaseModel):

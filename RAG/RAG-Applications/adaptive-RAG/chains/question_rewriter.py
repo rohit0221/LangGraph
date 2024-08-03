@@ -11,7 +11,7 @@ from prompts.build_prompts import *
 ### Question Re-writer
 
 # LLM
-llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 re_write_prompt = question_rewriter_prompt()
 
