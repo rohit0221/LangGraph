@@ -19,3 +19,5 @@ pandas
 matplotlib
 langchain_core
 langchain-groq
+mathtools
+numexpr
