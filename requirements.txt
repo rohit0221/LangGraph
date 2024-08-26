@@ -21,3 +21,4 @@ langchain_core
 langchain-groq
 mathtools
 numexpr
+langgraph-checkpoint-sqlite
