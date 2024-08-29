@@ -3,14 +3,14 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 web_search_tool = TavilySearchResults(k=3)
 
 from langchain.schema import Document
-from chains.indexer import *
-from chains.retrieval_grader import *
+from utils.indexer import *
 from chains.question_rewriter import *
+from chains.retrieval_grader import *
 from chains.hullucination_grader import *
 from chains.answer_grader import *
 from chains.response_generator import *
 
-def retrieve(state):
+def retrieve_node(state):
     """
     Retrieve documents
 
@@ -29,7 +29,7 @@ def retrieve(state):
     return {"documents": documents, "question": question}
 
 
-def generate(state):
+def generate_node(state):
     """
     Generate answer
 
@@ -48,7 +48,7 @@ def generate(state):
     return {"documents": documents, "question": question, "generation": generation}
 
 
-def grade_documents(state):
+def grade_documents_node(state):
     """
     Determines whether the retrieved documents are relevant to the question.
 
@@ -67,7 +67,7 @@ def grade_documents(state):
     # Score each doc
     filtered_docs = []
     for d in documents:
-        score = retrieval_grader.invoke(
+        score = retrieval_grader_chain.invoke(
             {"question": question, "document": d.page_content}
         )
         grade = score.binary_score
@@ -80,7 +80,7 @@ def grade_documents(state):
     return {"documents": filtered_docs, "question": question}
 
 
-def transform_query(state):
+def transform_query_node(state):
     """
     Transform the query to produce a better question.
 
@@ -96,11 +96,11 @@ def transform_query(state):
     documents = state["documents"]
 
     # Re-write question
-    better_question = question_rewriter.invoke({"question": question})
+    better_question = question_rewriter_chain.invoke({"question": question})
     return {"documents": documents, "question": better_question}
 
 
-def web_search(state):
+def web_search_node(state):
     """
     Web search based on the re-phrased question.
 

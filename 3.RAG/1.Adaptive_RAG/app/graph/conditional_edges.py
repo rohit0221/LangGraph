@@ -24,7 +24,7 @@ def route_question(state):
 
     print("---ROUTE QUESTION---")
     question = state["question"]
-    source = question_router.invoke({"question": question})
+    source = question_router_chain.invoke({"question": question})
     if source.datasource == "web_search":
         print("---ROUTE QUESTION TO WEB SEARCH---")
         return "web_search"
@@ -77,7 +77,7 @@ def grade_generation_v_documents_and_question(state):
     documents = state["documents"]
     generation = state["generation"]
 
-    score = hallucination_grader.invoke(
+    score = hallucination_grader_chain.invoke(
         {"documents": documents, "generation": generation}
     )
     grade = score.binary_score
@@ -87,7 +87,7 @@ def grade_generation_v_documents_and_question(state):
         print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
         # Check question-answering
         print("---GRADE GENERATION vs QUESTION---")
-        score = answer_grader.invoke({"question": question, "generation": generation})
+        score = answer_grader_chain.invoke({"question": question, "generation": generation})
         grade = score.binary_score
         if grade == "yes":
             print("---DECISION: GENERATION ADDRESSES QUESTION---")
