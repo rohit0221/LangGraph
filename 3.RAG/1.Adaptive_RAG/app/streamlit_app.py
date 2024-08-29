@@ -68,22 +68,37 @@ def handle_message():
         placeholder = st.empty()
 
         if user_question:                                             
+            # Add the user question to the session state
             st.session_state.messages.append({"role": "user", "content": user_question})
-            streamed_output = ""
+
+            # Initialize the assistant's message with the avatar
+            assistant_message = st.chat_message("assistant", avatar="./bot.png")
+
+            # Initialize an empty list to keep track of already processed nodes
+            processed_nodes = set()
 
             # Use the modified print_final_generation function to stream the answer
+            streamed_output = ""  # Accumulate the full streamed output here
+
+            # Stream the answer progressively
             for partial_answer in print_final_generation(user_question):
-                # Accumulate the streamed output
-                streamed_output += partial_answer + "\n"
+                # Check if the partial answer is a node or part of the expected structure
+                if partial_answer.startswith("Node"):
+                    # If the node has not been processed yet, add to the output
+                    node_name = partial_answer.split("'")[1]  # Extract node name
+                    if node_name not in processed_nodes:
+                        processed_nodes.add(node_name)
+                        streamed_output += partial_answer + "\n"
+
+                else:
+                    # For other outputs, just add them directly
+                    streamed_output += partial_answer + "\n"
                 
-                # Update the placeholder with the current streamed content
-                placeholder.text(streamed_output)
-            
+                # Update the assistant's message with the accumulated streamed output
+                assistant_message.markdown(streamed_output)
+
             # Once streaming is complete, add the final streamed output to the session state
             st.session_state.messages.append({"role": "assistant", "content": streamed_output})
-            
-            # Display the final message in the chat format
-            st.chat_message("assistant", avatar="./bot.png").write(streamed_output)
     
 def main():
 
