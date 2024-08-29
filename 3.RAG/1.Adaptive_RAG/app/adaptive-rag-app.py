@@ -14,6 +14,8 @@ def print_final_generation(inputs):
     # Run
     # inputs = {"question": "What are the types of agent memory?"}
     inputs = {"question": inputs}
+    print("the input from user is :::::")
+    print(inputs)
     for output in app.stream(inputs):
         for key, value in output.items():
             # Node

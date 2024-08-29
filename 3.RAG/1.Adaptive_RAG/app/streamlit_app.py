@@ -11,19 +11,41 @@ from pprint import pprint
 
 app = create_graph_app()
 
-def print_final_generation(inputs):
+# def print_final_generation(inputs):
         
-    # Run
-    # inputs = {"question": "What are the types of agent memory?"}
+#     # Run
+#     # inputs = {"question": "What are the types of agent memory?"}
+#     for output in app.stream(inputs):
+#         for key, value in output.items():
+#             # Node
+#             pprint(f"Node '{key}':")
+#             # Optional: print full state at each node
+#             # pprint.pprint(value["keys"], indent=2, width=80, depth=None)
+#         pprint("\n---\n")
+#     # Final generation
+#     pprint(value["generation"])
+
+
+def print_final_generation(inputs):
+    # Stream outputs from the app
+    inputs = {"question": inputs}
     for output in app.stream(inputs):
+        # For each node in the output, yield the formatted string
         for key, value in output.items():
-            # Node
-            pprint(f"Node '{key}':")
-            # Optional: print full state at each node
-            # pprint.pprint(value["keys"], indent=2, width=80, depth=None)
-        pprint("\n---\n")
-    # Final generation
-    pprint(value["generation"])
+            # Create a formatted string for the node
+            node_output = f"Node '{key}':"
+            yield node_output  # Yield the node output
+            
+            # Optionally yield full state at each node
+            # keys_output = pprint.pformat(value["keys"], indent=2, width=80, depth=None)
+            # yield keys_output
+
+        # Yield a separator between nodes
+        yield "\n---\n"
+
+    # Yield the final generation
+    final_generation = value.get("generation", "No generation found")
+    yield final_generation
 
 
 def handle_message():
@@ -43,15 +65,25 @@ def handle_message():
         print(message)
         print(type(message))
         user_question = next((item['content'] for item in reversed(message) if item['role'] == 'user'), None)
+        placeholder = st.empty()
 
-        if user_question:
-            answer=print_final_generation(user_question)                                                
+        if user_question:                                             
             st.session_state.messages.append({"role": "user", "content": user_question})
-            print(answer)
-            print(type(answer))
-            msg = answer['output_text']
-            st.session_state.messages.append({"role": "assistant", "content": msg})
-            st.chat_message("assistant",avatar="./bot.png").write(msg)
+            streamed_output = ""
+
+            # Use the modified print_final_generation function to stream the answer
+            for partial_answer in print_final_generation(user_question):
+                # Accumulate the streamed output
+                streamed_output += partial_answer + "\n"
+                
+                # Update the placeholder with the current streamed content
+                placeholder.text(streamed_output)
+            
+            # Once streaming is complete, add the final streamed output to the session state
+            st.session_state.messages.append({"role": "assistant", "content": streamed_output})
+            
+            # Display the final message in the chat format
+            st.chat_message("assistant", avatar="./bot.png").write(streamed_output)
     
 def main():
 
