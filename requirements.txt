@@ -22,3 +22,4 @@ langchain-groq
 mathtools
 numexpr
 langgraph-checkpoint-sqlite
+streamlit
