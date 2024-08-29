@@ -3,7 +3,7 @@ from typing import List
 from typing_extensions import TypedDict
 
 from graph.nodes import *
-from graph.conditional_edges import *
+from graph.conditional_edge_functions import *
 
 class GraphState(TypedDict):
     """
