@@ -1,9 +1,6 @@
 
 from langchain_core.messages import HumanMessage
-from graph import create_graph
-
-graph =  create_graph()
-
+from graph import graph, display_graph
 
 
 def print_final_generation(inputs):
@@ -33,4 +30,5 @@ while True:
     if user_input.lower() in ["quit", "exit", "q"]:
         print("Goodbye!")
         break
+    display_graph(graph)
     print_final_generation(user_input)        
