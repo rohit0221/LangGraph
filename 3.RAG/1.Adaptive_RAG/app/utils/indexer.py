@@ -7,7 +7,12 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 
-def build_index():     
+
+
+def build_retriever():
+    ### from langchain_cohere import CohereEmbeddings
+
+    # Set embeddings
     embd = OpenAIEmbeddings()
 
     # Docs to index
@@ -26,23 +31,15 @@ def build_index():
         chunk_size=500, chunk_overlap=0
     )
     doc_splits = text_splitter.split_documents(docs_list)
-    return doc_splits
 
-
-def build_vector_store(doc_splits):
-    embd = OpenAIEmbeddings()
     # Add to vectorstore
     vectorstore = Chroma.from_documents(
         documents=doc_splits,
         collection_name="rag-chroma",
         embedding=embd,
     )
-    return vectorstore
-
-doc_splits=build_index()
-vectorstore= build_vector_store(doc_splits)
-
-def build_retriever(vectorstore):
     retriever = vectorstore.as_retriever()
-    return retriever
+    print("indexing done!!!")
 
+    return retriever
+    

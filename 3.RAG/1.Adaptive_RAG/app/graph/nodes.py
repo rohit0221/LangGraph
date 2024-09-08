@@ -7,7 +7,7 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 web_search_tool = TavilySearchResults(k=3)
 
 from langchain.schema import Document
-from utils.indexer import *
+from utils.indexer import build_retriever
 from chains.question_rewriter import *
 from chains.retrieval_grader import *
 from chains.hullucination_grader import *
@@ -26,7 +26,7 @@ def retrieve(state):
     """
     print("---RETRIEVE---")
     question = state["question"]
-    retriever=build_retriever(vectorstore)
+    retriever=build_retriever()
 
     # Retrieval
     documents = retriever.invoke(question)
