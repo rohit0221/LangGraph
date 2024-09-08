@@ -4,6 +4,10 @@ from graph.nodes import *
 from graph.conditional_edge_functions import *
 from langgraph.graph import END,START, StateGraph
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 workflow = StateGraph(GraphState)
 
 # Define the nodes
