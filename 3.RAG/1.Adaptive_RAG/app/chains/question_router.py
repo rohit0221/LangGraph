@@ -1,6 +1,3 @@
-from dotenv import load_dotenv
-import os
-load_dotenv()
 from typing import Literal
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.prompts import ChatPromptTemplate

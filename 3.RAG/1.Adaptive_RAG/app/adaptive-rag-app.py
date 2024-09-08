@@ -2,12 +2,11 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-from graph.app_graph import create_graph_app
+from graph.app_graph import app,display_graph
 
 from pprint import pprint
 
 
-app = create_graph_app()
 
 def print_final_generation(inputs):
         
@@ -35,4 +34,6 @@ while True:
     if user_input.lower() in ["quit", "exit", "q"]:
         print("Goodbye!")
         break
+    display_graph(app)
     print_final_generation(user_input)
+    

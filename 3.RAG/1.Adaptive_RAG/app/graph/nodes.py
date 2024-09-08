@@ -10,7 +10,7 @@ from chains.hullucination_grader import *
 from chains.answer_grader import *
 from chains.response_generator import *
 
-def retrieve_node(state):
+def retrieve(state):
     """
     Retrieve documents
 
@@ -26,10 +26,12 @@ def retrieve_node(state):
 
     # Retrieval
     documents = retriever.invoke(question)
-    return {"documents": documents, "question": question}
+    # Update the state with retrieved documents while retaining other existing state keys
+    state["documents"] = documents
+    return state
 
 
-def generate_node(state):
+def generate(state):
     """
     Generate answer
 
@@ -37,7 +39,7 @@ def generate_node(state):
         state (dict): The current graph state
 
     Returns:
-        state (dict): New key added to state, generation, that contains LLM generation
+        state (dict): Updated state with LLM generation
     """
     print("---GENERATE---")
     question = state["question"]
@@ -45,10 +47,13 @@ def generate_node(state):
 
     # RAG generation
     generation = rag_chain.invoke({"context": documents, "question": question})
-    return {"documents": documents, "question": question, "generation": generation}
+
+    # Update the state with the new generation while retaining other existing state keys
+    state["generation"] = generation
+    return state
 
 
-def grade_documents_node(state):
+def grade_documents(state):
     """
     Determines whether the retrieved documents are relevant to the question.
 
@@ -56,15 +61,13 @@ def grade_documents_node(state):
         state (dict): The current graph state
 
     Returns:
-        state (dict): Updates documents key with only filtered relevant documents
+        state (dict): Updated state with only filtered relevant documents
     """
-
     print("---CHECK DOCUMENT RELEVANCE TO QUESTION---")
     question = state["question"]
     documents = state["documents"]
     
-
-    # Score each doc
+    # Score each document
     filtered_docs = []
     for d in documents:
         score = retrieval_grader_chain.invoke(
@@ -77,10 +80,12 @@ def grade_documents_node(state):
         else:
             print("---GRADE: DOCUMENT NOT RELEVANT---")
             continue
-    return {"documents": filtered_docs, "question": question}
 
+    # Update the state with filtered documents while retaining other existing state keys
+    state["documents"] = filtered_docs
+    return state
 
-def transform_query_node(state):
+def transform_query(state):
     """
     Transform the query to produce a better question.
 
@@ -88,27 +93,30 @@ def transform_query_node(state):
         state (dict): The current graph state
 
     Returns:
-        state (dict): Updates question key with a re-phrased question
+        state (dict): Updated state with a rephrased question
     """
 
     print("---TRANSFORM QUERY---")
     question = state["question"]
-    documents = state["documents"]
 
-    # Re-write question
+    # Re-write the question
     better_question = question_rewriter_chain.invoke({"question": question})
-    return {"documents": documents, "question": better_question}
+
+    # Update the state with the rephrased question while retaining other existing state keys
+    state["question"] = better_question
+    return state
 
 
-def web_search_node(state):
+
+def web_search(state):
     """
-    Web search based on the re-phrased question.
+    Web search based on the rephrased question.
 
     Args:
         state (dict): The current graph state
 
     Returns:
-        state (dict): Updates documents key with appended web results
+        state (dict): Updated state with web search results appended to documents
     """
 
     print("---WEB SEARCH---")
@@ -117,6 +125,14 @@ def web_search_node(state):
     # Web search
     docs = web_search_tool.invoke({"query": question})
     web_results = "\n".join([d["content"] for d in docs])
-    web_results = Document(page_content=web_results)
+    web_results_doc = Document(page_content=web_results)
 
-    return {"documents": web_results, "question": question}
+    # Initialize documents if not already done
+    if "documents" not in state or state["documents"] is None:
+        state["documents"] = []
+
+    # Append web results to existing documents
+    state["documents"].append(web_results_doc)
+
+    return state
+
