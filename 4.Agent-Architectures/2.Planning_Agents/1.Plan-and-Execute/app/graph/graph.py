@@ -1,4 +1,4 @@
-from langgraph.graph import StateGraph, START
+from langgraph.graph import StateGraph, START, END
 from graph.nodes import PlanExecute, plan_step, replan_step, execute_step, should_end
 
 
@@ -47,6 +47,7 @@ def create_graph():
         "replan",
         # Next, we pass in the function that will determine which node is called next.
         should_end,
+        ["agent", END],
     )
 
     # Finally, we compile it!
